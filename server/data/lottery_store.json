@@ -1,0 +1,155 @@
+{
+  "admin": {
+    "passwordHash": "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
+    "plainDefaultHint": "kerala@admin2026",
+    "updatedAt": "2026-11-10T23:35:00.000Z",
+    "sessionSecret": "dde99cab327daa9be7120486350a2c30df0a7f005d1e39371a2e2350298da4f9"
+  },
+  "settings": {
+    "drawDate": "13-11-2026",
+    "isLive": true,
+    "activeWinnerId": "win-mwf10a0u8pb",
+    "statutoryNotice": "⚠ If you win more than ₹5,00,000, the amount will be transferred through an RBI-authorized process and tax 4500/- must be paid. Any winnings above ₹5 lakh are subject to tax as per RBI rules.",
+    "helpline": "0471-2305230, 0471-2305193",
+    "email": "cru.lotteries@kerala.gov.in",
+    "agentPhone": "9583405079"
+  },
+  "winners": [
+    {
+      "id": "win-mwf10a0u8pb",
+      "name": "KHUSHBU SINGH",
+      "mobile": "9583405079",
+      "state": "Kerala",
+      "agentCode": "690003",
+      "ticketNo": "DS856323",
+      "bookingDate": "2026-11-13",
+      "amount": "₹ 10,00,000/-",
+      "prizeTier": "4th Prize",
+      "taxPaymentStatus": "Processing.",
+      "taxProgress": 95,
+      "fees": [
+        {
+          "label": "Processing Fees",
+          "amount": "4800"
+        }
+      ],
+      "taxNotice": "Mr/Mrs KHUSHBU SINGH, your tax payment is not complete. Please make the payment and receive your prize money.",
+      "createdAt": "2026-11-13T13:42:10.110Z",
+      "updatedAt": "2026-11-13T13:42:10.110Z"
+    },
+    {
+      "id": "win-mwbyk0221ou",
+      "name": "SUNIL KUMAR",
+      "mobile": "7250014148",
+      "state": "Kerala",
+      "agentCode": "690003",
+      "ticketNo": "SG856355",
+      "bookingDate": "2026-11-11",
+      "amount": "₹ 10,00,000/-",
+      "prizeTier": "4th Prize",
+      "taxPaymentStatus": "Processing.",
+      "taxProgress": 95,
+      "fees": [
+        {
+          "label": "Processing Fees",
+          "amount": "4800"
+        }
+      ],
+      "taxNotice": "Mr/Mrs SUNIL KUMAR, your tax payment is not complete. Please make the payment and receive your prize money.",
+      "createdAt": "2026-11-11T10:10:12.938Z",
+      "updatedAt": "2026-11-11T10:10:12.938Z"
+    }
+  ],
+  "prizeTickets": {
+    "1st Prize": [
+      "KD332145",
+      "KG998045",
+      "SK243628"
+    ],
+    "Consolation Prize": [
+      "KD3321**",
+      "SK2436**",
+      "KG9980**",
+      "DT6785**",
+      "KG7674**",
+      "MV7586**",
+      "HF6757**",
+      "LS6482**",
+      "OR6289**",
+      "WX2309**",
+      "XS9539**",
+      "OC6290**"
+    ],
+    "2nd Prize": [
+      "HB387629",
+      "MS509186",
+      "OD960847",
+      "VD757895",
+      "CR590563",
+      "AX409124"
+    ],
+    "3rd Prize": [
+      "XL560943",
+      "DM758320",
+      "XS640065",
+      "DB390531",
+      "KA297852",
+      "HR092345",
+      "AO092367",
+      "BS760931",
+      "GF906572"
+    ],
+    "4th Prize": [
+      "DS856323",
+      "SG856355",
+      "SJ709243",
+      "BZ109537",
+      "KS856868",
+      "VY968258",
+      "SK427252",
+      "SF529264",
+      "KL345112",
+      "CT962436",
+      "NV760001",
+      "UA826282",
+      "BS624267",
+      "DG065534"
+    ],
+    "5th Prize": [
+      "SN925606",
+      "BD093563",
+      "XJ387042",
+      "XJ759306",
+      "DH598435",
+      "SF659784",
+      "BJ868685",
+      "ST650982",
+      "NM809567",
+      "UG609646",
+      "DH609834",
+      "SE980658",
+      "LT650957",
+      "GS549864"
+    ],
+    "6th Prize": [
+      "HSD73548",
+      "JD633537",
+      "JF839385",
+      "IE748363",
+      "SK739392",
+      "KV563939",
+      "FU723784",
+      "CY827365",
+      "NH739466",
+      "UK638475",
+      "JR745648",
+      "SB738364",
+      "LH634838",
+      "JC937398",
+      "XE839396",
+      "VR736378",
+      "AS739376",
+      "PO648489"
+    ]
+  }
+}

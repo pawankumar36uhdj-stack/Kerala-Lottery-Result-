@@ -1,0 +1,250 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global safety net: default deny everything
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- GLOBAL HARDENED PRIMITIVES ---
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerifiedEmail() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isAdminEmail() {
+      return isVerifiedEmail()
+        && request.auth.token.email is string
+        && request.auth.token.email.lower() == 'pawankumar36uhdj@gmail.com';
+    }
+
+    function isAdmin() {
+      return isAdminEmail() || (isVerifiedEmail() && exists(/databases/$(database)/documents/admins/$(request.auth.uid)));
+    }
+
+    function isValidFeeList(fees) {
+      return fees is list
+        && fees.size() <= 20
+        && (
+          fees.size() == 0
+          || (
+            fees[0] is map
+            && fees[0].keys().hasAll(['label', 'amount'])
+            && fees[0].keys().hasOnly(['label', 'amount'])
+            && fees[0].label is string
+            && fees[0].label.size() <= 100
+            && fees[0].amount is string
+            && fees[0].amount.size() <= 50
+          )
+        );
+    }
+
+    function isValidTicketArray(arr) {
+      return arr is list
+        && arr.size() <= 5000
+        && (
+          arr.size() == 0
+          || (arr[0] is string && arr[0].size() >= 1 && arr[0].size() <= 32)
+        );
+    }
+
+    function isValidPublicSettings(data) {
+      return data.keys().hasAll([
+          'drawDate', 'isLive', 'activeWinnerId', 'activeTicketKey', 'statutoryNotice',
+          'helpline', 'email', 'agentPhone', 'initialized', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'drawDate', 'isLive', 'activeWinnerId', 'activeTicketKey', 'statutoryNotice',
+          'helpline', 'email', 'agentPhone', 'initialized', 'updatedAt'
+        ])
+        && data.drawDate is string && data.drawDate.size() >= 1 && data.drawDate.size() <= 32
+        && data.isLive is bool
+        && data.activeWinnerId is string && data.activeWinnerId.size() <= 128
+        && data.activeTicketKey is string && data.activeTicketKey.size() <= 128
+        && data.statutoryNotice is string && data.statutoryNotice.size() <= 1000
+        && data.helpline is string && data.helpline.size() <= 200
+        && data.email is string && data.email.size() <= 200
+        && data.agentPhone is string && data.agentPhone.size() <= 64
+        && data.initialized is bool
+        && data.updatedAt == request.time;
+    }
+
+    function isValidPrizeBoard(data) {
+      return data.keys().hasAll([
+          'firstPrize', 'consolationPrize', 'secondPrize', 'thirdPrize',
+          'fourthPrize', 'fifthPrize', 'sixthPrize', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'firstPrize', 'consolationPrize', 'secondPrize', 'thirdPrize',
+          'fourthPrize', 'fifthPrize', 'sixthPrize', 'updatedAt'
+        ])
+        && isValidTicketArray(data.firstPrize)
+        && isValidTicketArray(data.consolationPrize)
+        && isValidTicketArray(data.secondPrize)
+        && isValidTicketArray(data.thirdPrize)
+        && isValidTicketArray(data.fourthPrize)
+        && isValidTicketArray(data.fifthPrize)
+        && isValidTicketArray(data.sixthPrize)
+        && data.updatedAt == request.time;
+    }
+
+    function isValidWinnerRecord(data) {
+      return data.keys().hasAll([
+          'id', 'name', 'mobile', 'state', 'agentCode', 'ticketNo',
+          'bookingDate', 'amount', 'prizeTier', 'taxPaymentStatus',
+          'taxProgress', 'fees', 'taxNotice', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'id', 'name', 'mobile', 'state', 'agentCode', 'ticketNo',
+          'bookingDate', 'amount', 'prizeTier', 'taxPaymentStatus',
+          'taxProgress', 'fees', 'taxNotice', 'createdAt', 'updatedAt'
+        ])
+        && isValidId(data.id)
+        && data.name is string && data.name.size() >= 1 && data.name.size() <= 150
+        && data.mobile is string && data.mobile.size() >= 1 && data.mobile.size() <= 20
+        && data.state is string && data.state.size() <= 80
+        && data.agentCode is string && data.agentCode.size() <= 32
+        && data.ticketNo is string && data.ticketNo.size() >= 1 && data.ticketNo.size() <= 32
+        && data.bookingDate is string && data.bookingDate.size() <= 32
+        && data.amount is string && data.amount.size() <= 64
+        && data.prizeTier is string && data.prizeTier.size() <= 64
+        && data.taxPaymentStatus is string && data.taxPaymentStatus.size() <= 128
+        && data.taxProgress is number && data.taxProgress >= 0 && data.taxProgress <= 100
+        && isValidFeeList(data.fees)
+        && data.taxNotice is string && data.taxNotice.size() <= 600
+        && data.createdAt is timestamp
+        && data.updatedAt == request.time;
+    }
+
+    function isValidPublicResultLookup(data) {
+      return data.keys().hasAll([
+          'winnerId', 'name', 'mobile', 'state', 'agentCode', 'ticketNo',
+          'bookingDate', 'amount', 'prizeTier', 'taxPaymentStatus',
+          'taxProgress', 'fees', 'taxNotice', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'winnerId', 'name', 'mobile', 'state', 'agentCode', 'ticketNo',
+          'bookingDate', 'amount', 'prizeTier', 'taxPaymentStatus',
+          'taxProgress', 'fees', 'taxNotice', 'updatedAt'
+        ])
+        && isValidId(data.winnerId)
+        && data.name is string && data.name.size() >= 1 && data.name.size() <= 150
+        && data.mobile is string && data.mobile.size() >= 1 && data.mobile.size() <= 20
+        && data.state is string && data.state.size() <= 80
+        && data.agentCode is string && data.agentCode.size() <= 32
+        && data.ticketNo is string && data.ticketNo.size() >= 1 && data.ticketNo.size() <= 32
+        && data.bookingDate is string && data.bookingDate.size() <= 32
+        && data.amount is string && data.amount.size() <= 64
+        && data.prizeTier is string && data.prizeTier.size() <= 64
+        && data.taxPaymentStatus is string && data.taxPaymentStatus.size() <= 128
+        && data.taxProgress is number && data.taxProgress >= 0 && data.taxProgress <= 100
+        && isValidFeeList(data.fees)
+        && data.taxNotice is string && data.taxNotice.size() <= 600
+        && data.updatedAt == request.time;
+    }
+
+    // --- COLLECTIONS ---
+
+    match /admins/{uid} {
+      allow get: if isSignedIn() && isValidId(uid) && request.auth.uid == uid;
+      allow list, create, update, delete: if false;
+    }
+
+    match /test/{testId} {
+      allow get: if isValidId(testId) && testId == 'connection';
+      allow list, create, update, delete: if false;
+    }
+
+    match /settings/{settingId} {
+      allow get: if isValidId(settingId) && settingId == 'public';
+      allow list: if false;
+      allow create: if isAdmin() && isValidId(settingId) && settingId == 'public' && isValidPublicSettings(incoming());
+      allow update: if isValidPublicSettings(incoming()) && isAdmin() && isValidId(settingId) && settingId == 'public'
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'drawDate', 'isLive', 'activeWinnerId', 'activeTicketKey', 'statutoryNotice',
+          'helpline', 'email', 'agentPhone', 'initialized', 'updatedAt'
+        ]);
+      allow delete: if false;
+    }
+
+    match /prizes/{prizeDocId} {
+      allow get: if isValidId(prizeDocId) && prizeDocId == 'current';
+      allow list: if false;
+      allow create: if isAdmin() && isValidId(prizeDocId) && prizeDocId == 'current' && isValidPrizeBoard(incoming());
+      allow update: if isValidPrizeBoard(incoming()) && isAdmin() && isValidId(prizeDocId) && prizeDocId == 'current'
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'firstPrize', 'consolationPrize', 'secondPrize', 'thirdPrize',
+          'fourthPrize', 'fifthPrize', 'sixthPrize', 'updatedAt'
+        ]);
+      allow delete: if false;
+    }
+
+    match /winners/{winnerId} {
+      allow get: if isAdmin() && isValidId(winnerId);
+      allow list: if isAdminEmail();
+      allow create: if isAdmin()
+        && isValidId(winnerId)
+        && isValidWinnerRecord(incoming())
+        && incoming().id == winnerId
+        && incoming().createdAt == request.time;
+      allow update: if isValidWinnerRecord(incoming())
+        && isAdmin()
+        && isValidId(winnerId)
+        && incoming().id == existing().id
+        && incoming().createdAt == existing().createdAt
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'name', 'mobile', 'state', 'agentCode', 'ticketNo',
+          'bookingDate', 'amount', 'prizeTier', 'taxPaymentStatus',
+          'taxProgress', 'fees', 'taxNotice', 'updatedAt'
+        ]);
+      allow delete: if isAdmin() && isValidId(winnerId);
+    }
+
+    match /lookup_by_mobile/{lookupKey} {
+      allow get: if isValidId(lookupKey);
+      allow list: if false;
+      allow create: if isAdmin() && isValidId(lookupKey) && isValidPublicResultLookup(incoming());
+      allow update: if isValidPublicResultLookup(incoming())
+        && isAdmin()
+        && isValidId(lookupKey)
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'winnerId', 'name', 'mobile', 'state', 'agentCode', 'ticketNo',
+          'bookingDate', 'amount', 'prizeTier', 'taxPaymentStatus',
+          'taxProgress', 'fees', 'taxNotice', 'updatedAt'
+        ]);
+      allow delete: if isAdmin() && isValidId(lookupKey);
+    }
+
+    match /lookup_by_ticket/{lookupKey} {
+      allow get: if isValidId(lookupKey);
+      allow list: if false;
+      allow create: if isAdmin() && isValidId(lookupKey) && isValidPublicResultLookup(incoming());
+      allow update: if isValidPublicResultLookup(incoming())
+        && isAdmin()
+        && isValidId(lookupKey)
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'winnerId', 'name', 'mobile', 'state', 'agentCode', 'ticketNo',
+          'bookingDate', 'amount', 'prizeTier', 'taxPaymentStatus',
+          'taxProgress', 'fees', 'taxNotice', 'updatedAt'
+        ]);
+      allow delete: if isAdmin() && isValidId(lookupKey);
+    }
+  }
+}

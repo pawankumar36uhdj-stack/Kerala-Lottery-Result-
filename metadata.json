@@ -1,0 +1,6 @@
+{
+  "name": "Kerala lottery Result Updates",
+  "description": "Official Kerala State Lottery Portal - Results, Ticket Booking, Agents Directory, Live Draw, and Order Tracking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

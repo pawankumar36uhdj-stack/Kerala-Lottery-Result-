@@ -1,0 +1,332 @@
+{
+  "entities": {
+    "AdminUser": {
+      "title": "AdminUser",
+      "description": "Authorized portal administrator record.",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email",
+          "maxLength": 200,
+          "description": "Verified administrator email address."
+        },
+        "role": {
+          "type": "string",
+          "enum": ["admin"],
+          "description": "Administrator role identifier."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server creation timestamp."
+        }
+      },
+      "required": ["email", "role", "createdAt"]
+    },
+    "PublicSettings": {
+      "title": "PublicSettings",
+      "description": "Publicly visible lottery portal settings managed exclusively by the administrator.",
+      "type": "object",
+      "properties": {
+        "drawDate": {
+          "type": "string",
+          "maxLength": 32,
+          "description": "Official draw date displayed on result sheet."
+        },
+        "isLive": {
+          "type": "boolean",
+          "description": "Whether live result status is active."
+        },
+        "activeWinnerId": {
+          "type": "string",
+          "maxLength": 128,
+          "description": "Currently highlighted live winner ID."
+        },
+        "activeTicketKey": {
+          "type": "string",
+          "maxLength": 128,
+          "description": "Sanitized lookup key for the currently highlighted live winner ticket."
+        },
+        "statutoryNotice": {
+          "type": "string",
+          "maxLength": 1000,
+          "description": "Official RBI tax advisory notice."
+        },
+        "helpline": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Official helpline phone numbers."
+        },
+        "email": {
+          "type": "string",
+          "maxLength": 200,
+          "description": "Official support email address."
+        },
+        "agentPhone": {
+          "type": "string",
+          "maxLength": 64,
+          "description": "District agent contact phone number."
+        },
+        "initialized": {
+          "type": "boolean",
+          "description": "Tracks one-time initialization so defaults are never re-seeded."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of last update."
+        }
+      },
+      "required": [
+        "drawDate",
+        "isLive",
+        "activeWinnerId",
+        "activeTicketKey",
+        "statutoryNotice",
+        "helpline",
+        "email",
+        "agentPhone",
+        "initialized",
+        "updatedAt"
+      ]
+    },
+    "PrizeBoard": {
+      "title": "PrizeBoard",
+      "description": "Official prize tier ticket lists managed by the administrator.",
+      "type": "object",
+      "properties": {
+        "firstPrize": {
+          "type": "array",
+          "description": "Ticket numbers in 1st Prize tier."
+        },
+        "consolationPrize": {
+          "type": "array",
+          "description": "Ticket numbers in Consolation Prize tier."
+        },
+        "secondPrize": {
+          "type": "array",
+          "description": "Ticket numbers in 2nd Prize tier."
+        },
+        "thirdPrize": {
+          "type": "array",
+          "description": "Ticket numbers in 3rd Prize tier."
+        },
+        "fourthPrize": {
+          "type": "array",
+          "description": "Ticket numbers in 4th Prize tier."
+        },
+        "fifthPrize": {
+          "type": "array",
+          "description": "Ticket numbers in 5th Prize tier."
+        },
+        "sixthPrize": {
+          "type": "array",
+          "description": "Ticket numbers in 6th Prize tier."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of last update."
+        }
+      },
+      "required": [
+        "firstPrize",
+        "consolationPrize",
+        "secondPrize",
+        "thirdPrize",
+        "fourthPrize",
+        "fifthPrize",
+        "sixthPrize",
+        "updatedAt"
+      ]
+    },
+    "WinnerRecord": {
+      "title": "WinnerRecord",
+      "description": "Private full winner record stored in the admin winners collection.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "name": {
+          "type": "string",
+          "maxLength": 150
+        },
+        "mobile": {
+          "type": "string",
+          "maxLength": 20
+        },
+        "state": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "agentCode": {
+          "type": "string",
+          "maxLength": 32
+        },
+        "ticketNo": {
+          "type": "string",
+          "maxLength": 32
+        },
+        "bookingDate": {
+          "type": "string",
+          "maxLength": 32
+        },
+        "amount": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "prizeTier": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "taxPaymentStatus": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "taxProgress": {
+          "type": "number"
+        },
+        "fees": {
+          "type": "array"
+        },
+        "taxNotice": {
+          "type": "string",
+          "maxLength": 600
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "mobile",
+        "state",
+        "agentCode",
+        "ticketNo",
+        "bookingDate",
+        "amount",
+        "prizeTier",
+        "taxPaymentStatus",
+        "taxProgress",
+        "fees",
+        "taxNotice",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "PublicResultLookup": {
+      "title": "PublicResultLookup",
+      "description": "Single-document exact-match lookup record indexed by sanitized mobile or ticket number.",
+      "type": "object",
+      "properties": {
+        "winnerId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "name": {
+          "type": "string",
+          "maxLength": 150
+        },
+        "mobile": {
+          "type": "string",
+          "maxLength": 20
+        },
+        "state": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "agentCode": {
+          "type": "string",
+          "maxLength": 32
+        },
+        "ticketNo": {
+          "type": "string",
+          "maxLength": 32
+        },
+        "bookingDate": {
+          "type": "string",
+          "maxLength": 32
+        },
+        "amount": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "prizeTier": {
+          "type": "string",
+          "maxLength": 64
+        },
+        "taxPaymentStatus": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "taxProgress": {
+          "type": "number"
+        },
+        "fees": {
+          "type": "array"
+        },
+        "taxNotice": {
+          "type": "string",
+          "maxLength": 600
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "winnerId",
+        "name",
+        "mobile",
+        "state",
+        "agentCode",
+        "ticketNo",
+        "bookingDate",
+        "amount",
+        "prizeTier",
+        "taxPaymentStatus",
+        "taxProgress",
+        "fees",
+        "taxNotice",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/admins/{uid}": {
+      "schema": { "$ref": "#/entities/AdminUser" },
+      "description": "Admin user role documents."
+    },
+    "/settings/{settingId}": {
+      "schema": { "$ref": "#/entities/PublicSettings" },
+      "description": "Singleton public settings document at /settings/public."
+    },
+    "/prizes/{prizeDocId}": {
+      "schema": { "$ref": "#/entities/PrizeBoard" },
+      "description": "Singleton prize tickets board document at /prizes/current."
+    },
+    "/winners/{winnerId}": {
+      "schema": { "$ref": "#/entities/WinnerRecord" },
+      "description": "Admin-managed winner records collection."
+    },
+    "/lookup_by_mobile/{lookupKey}": {
+      "schema": { "$ref": "#/entities/PublicResultLookup" },
+      "description": "Exact single-document lookup by mobile number (list disabled)."
+    },
+    "/lookup_by_ticket/{lookupKey}": {
+      "schema": { "$ref": "#/entities/PublicResultLookup" },
+      "description": "Exact single-document lookup by ticket number (list disabled)."
+    }
+  }
+}
